@@ -4,7 +4,8 @@
   "description": "Mangel pixels with js",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server",
+    "server": "webpack-dev-server",
+    "watch": "webpack --watch",
     "build": "webpack --config webpack-production.config.js -p"
   },
   "repository": {

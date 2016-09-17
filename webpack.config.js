@@ -1,13 +1,23 @@
+var path         = require('path');
+var SRC          = path.join(__dirname, 'src/');
+var NODE_MODULES = path.join(__dirname, 'node_modules/');
 
 module.exports = {
-    entry: './src/app.js',           
+    entry: './src/bootstrap.js',           
     output: {                     
-        path: './dist',            
-        publicPath: __dirname + '/dist',
-        filename: 'app-bundle.js'  
+         path: __dirname + '/dist',            
+        publicPath: '/dist/',
+        filename: 'app-bundle.js',
+        sourceMapFilename: '[file].map' 
     },
     resolve: {
+        root: [SRC, NODE_MODULES],
         extensions: ['', '.js', '.es6']
+    },
+    devtool: 'source-map',
+    devServer: { 
+        contentBase: 'dist',
+        colors: true
     },
     module: {
         preLoaders: [
