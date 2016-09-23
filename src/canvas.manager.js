@@ -25,14 +25,16 @@ export function init(options = {}){
 
 export function create(options = {}){
 
-    options.id      = canvas_list.length;
-    options.width   = options.width  || config.screen.width;
-    options.height  = options.height || config.screen.height;
+    return new Promise(resolve=>{
+        options.id      = canvas_list.length;
+        options.width   = options.width  || config.screen.width;
+        options.height  = options.height || config.screen.height;
 
-    let c = new Canvas(options);
-    canvas_list.push(c);
+        let c = new Canvas(options);
+        canvas_list.push(c);
 
-    console.log('canvas '+options.id+' create');
+        console.log('canvas '+options.id+' create');
 
-    return c;
+        resolve(c);
+    });  
 }

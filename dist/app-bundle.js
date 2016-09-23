@@ -50,7 +50,7 @@
 	
 	var pixelotool = _interopRequireWildcard(_pixelotool);
 	
-	var _program = __webpack_require__(6);
+	var _program = __webpack_require__(7);
 	
 	var _program2 = _interopRequireDefault(_program);
 	
@@ -86,7 +86,7 @@
 	
 	var _config2 = _interopRequireDefault(_config);
 	
-	var _canvas = __webpack_require__(5);
+	var _canvas = __webpack_require__(3);
 	
 	var canvasManager = _interopRequireWildcard(_canvas);
 	
@@ -132,82 +132,7 @@
 	};
 
 /***/ },
-/* 3 */,
-/* 4 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Canvas = function () {
-	    function Canvas() {
-	        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
-	        _classCallCheck(this, Canvas);
-	
-	        this.id = options.id;
-	
-	        this.$el = document.createElement('canvas');
-	        this.$el.id = options.name || 'canvas_' + this.id;
-	
-	        this.width = options.width;
-	        this.height = options.height;
-	
-	        this.$el.setAttribute('width', this.width);
-	        this.$el.setAttribute('height', this.height);
-	
-	        this.ctx = this.$el.getContext('2d');
-	
-	        // Image
-	
-	        if (options.image) {
-	            this.addImage(options.image);
-	        }
-	    }
-	
-	    _createClass(Canvas, [{
-	        key: 'addImage',
-	        value: function addImage(path) {
-	            var _this = this;
-	
-	            var img = new Image();
-	
-	            img.onload = function () {
-	                _this.ctx.drawImage(img, 0, 0, _this.width, _this.height);
-	            };
-	            img.src = path;
-	
-	            return this;
-	        }
-	    }, {
-	        key: 'clear',
-	        value: function clear() {
-	            this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
-	            this.ctx.fillRect(0, 0, this.width, this.height);
-	            return this;
-	        }
-	    }, {
-	        key: 'toScreen',
-	        value: function toScreen() {
-	            document.body.appendChild(this.$el);
-	            return this;
-	        }
-	    }]);
-	
-	    return Canvas;
-	}();
-	
-	exports.default = Canvas;
-
-/***/ },
-/* 5 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -252,21 +177,130 @@
 	    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	
 	
-	    options.id = canvas_list.length;
-	    options.width = options.width || config.screen.width;
-	    options.height = options.height || config.screen.height;
+	    return new Promise(function (resolve) {
+	        options.id = canvas_list.length;
+	        options.width = options.width || config.screen.width;
+	        options.height = options.height || config.screen.height;
 	
-	    var c = new _canvas2.default(options);
-	    canvas_list.push(c);
+	        var c = new _canvas2.default(options);
+	        canvas_list.push(c);
 	
-	    console.log('canvas ' + options.id + ' create');
+	        console.log('canvas ' + options.id + ' create');
 	
-	    return c;
+	        resolve(c);
+	    });
 	}
 
 /***/ },
-/* 6 */
+/* 4 */
 /***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Canvas = function () {
+	    function Canvas() {
+	        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	        _classCallCheck(this, Canvas);
+	
+	        this.id = options.id;
+	
+	        this.$el = document.createElement('canvas');
+	        this.$el.id = options.name || 'canvas_' + this.id;
+	
+	        this.width = options.width;
+	        this.height = options.height;
+	
+	        this.$el.setAttribute('width', this.width);
+	        this.$el.setAttribute('height', this.height);
+	
+	        this.ctx = this.$el.getContext('2d');
+	
+	        // Image
+	
+	        if (options.image) {
+	            this.addImage(options.image);
+	        }
+	    }
+	
+	    _createClass(Canvas, [{
+	        key: 'applyEachPixel',
+	        value: function applyEachPixel(pixel_filter) {
+	            var _this = this;
+	
+	            var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+	
+	            return new Promise(function (resolve) {
+	
+	                var pixels = _this.getImageData();
+	
+	                for (var i = 0; i < pixels.data.length; i += 4) {
+	
+	                    var p = pixel_filter(pixels.data[i], pixels.data[i + 1], pixels.data[i + 2], options);
+	
+	                    pixels.data[i] = p.r;
+	                    pixels.data[i + 1] = p.g;
+	                    pixels.data[i + 2] = p.b;
+	                }
+	
+	                _this.ctx.putImageData(pixels, 0, 0);
+	                resolve(_this);
+	            });
+	        }
+	    }, {
+	        key: 'getImageData',
+	        value: function getImageData() {
+	            return this.ctx.getImageData(0, 0, this.width, this.height);
+	        }
+	    }, {
+	        key: 'addImage',
+	        value: function addImage(path) {
+	            var _this2 = this;
+	
+	            return new Promise(function (resolve) {
+	                var img = new Image();
+	
+	                img.onload = function () {
+	                    _this2.ctx.drawImage(img, 0, 0, _this2.width, _this2.height);
+	                    resolve(_this2);
+	                };
+	                img.src = path;
+	            });
+	        }
+	    }, {
+	        key: 'clear',
+	        value: function clear() {
+	            this.ctx.fillStyle = "rgba(255, 255, 255, 1)";
+	            this.ctx.fillRect(0, 0, this.width, this.height);
+	            return this;
+	        }
+	    }, {
+	        key: 'toScreen',
+	        value: function toScreen() {
+	            document.body.appendChild(this.$el);
+	            return this;
+	        }
+	    }]);
+	
+	    return Canvas;
+	}();
+	
+	exports.default = Canvas;
+
+/***/ },
+/* 5 */,
+/* 6 */,
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -276,12 +310,47 @@
 	
 	exports.default = function (pot) {
 	
-	    var c1 = pot.canvas.create({
-	        image: 'asset/schoolboyq.png'
+	    pot.canvas.create().then(function (c) {
+	        return c.addImage('asset/schoolboyq.png');
+	    }).then(function (c) {
+	        return c.applyEachPixel(_filter2.default.grayscale);
+	    }).then(function (c) {
+	        return c.applyEachPixel(_filter2.default.threshold_light, 130);
+	    }).then(function (c) {
+	        return c.toScreen();
 	    });
-	    c1.toScreen();
 	
-	    console.log('Program is  ended');
+	    console.log('Program is ended');
+	};
+	
+	var _filter = __webpack_require__(8);
+	
+	var _filter2 = _interopRequireDefault(_filter);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = {
+	
+	    grayscale: function grayscale(r, g, b) {
+	        var v = 0.2126 * r + 0.7152 + g + 0.0722 * b;
+	        return { r: v, g: v, b: v };
+	    },
+	
+	    threshold: function threshold(r, g, b, config) {
+	        return r > config.r && g > config.g && b > config.b ? { r: r, g: g, b: b } : { r: 0, g: 0, b: 0 };
+	    },
+	    threshold_light: function threshold_light(r, g, b, light) {
+	        return (r + g + b) / 3 > light ? { r: r, g: g, b: b } : { r: 0, g: 0, b: 0 };
+	    }
 	};
 
 /***/ }

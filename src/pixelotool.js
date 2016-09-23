@@ -2,7 +2,7 @@
 import config from './config';
 import * as canvasManager from './canvas.manager';
 
-export var canvas = canvasManager;
+export var canvas   = canvasManager;
 
 export function init(options = {}){
 
