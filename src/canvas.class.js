@@ -23,6 +23,15 @@ export default class Canvas {
         }
     }
 
+    applyOnImage( effect, options = {} ){
+
+        return new Promise( resolve => {
+
+            effect(this, options);            
+            resolve(this);
+        });
+    }
+
     applyEachPixel( pixel_filter, options = {} ){
 
         return new Promise( resolve => {
@@ -47,6 +56,36 @@ export default class Canvas {
         return this.ctx.getImageData(0, 0, this.width, this.height);
     }
 
+    drawPixelTable( pixelTable ){
+
+        return new Promise( resolve => {
+
+            let pixels = this.getImageData(),
+                x = 1,
+                y = 1;
+
+            for(let i=0; i<pixels.data.length; i+=4){
+
+                let p = pixelTable.get(x,y);
+
+                pixels.data[i]      = p.color.r;
+                pixels.data[i+1]    = p.color.g;
+                pixels.data[i+2]    = p.color.b;
+
+                x++;
+                if(x>pixelTable.width){
+                    x = 1;
+                    y++;
+                }
+            }
+
+            this.ctx.putImageData(pixels, 0, 0);
+
+            log('Canvas.drawPixelTable() solved');
+            resolve(this);
+        });
+    }
+
     addImage( path ){
 
         return new Promise(resolve=>{
@@ -69,6 +108,7 @@ export default class Canvas {
 
     toScreen(){
         document.body.appendChild(this.$el);
+        document.getElementById('loading').style.display = 'none';
         return this;
     }
 } 

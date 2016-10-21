@@ -38,3 +38,7 @@ export function create(options = {}){
         resolve(c);
     });  
 }
+
+export function getConfig(){
+    return config;
+}

@@ -36,7 +36,13 @@ module.exports = {
                     presets: ['es2015',  'stage-0'] 
                 }
             }
-        ]
+        ],
+        postLoaders: [
+            {
+                test: /\.worker\.js$/,
+                loader: "worker-loader?inline=true"
+            }
+        ],
     },
 
     jshint: {
